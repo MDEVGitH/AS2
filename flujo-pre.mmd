@@ -1,0 +1,11 @@
+flowchart TD
+    A[Customer] -->|wants a song| B(Waiter)
+    B --> |Communicates| C(DJ)
+    C --> CC{Decides}
+    CC -->|One| D[Play the song]
+    CC -->|Two| E[Ignore request]
+    CC -->|Three| F[Put it into a playlist queue]
+    D --> |makes happy| A
+    E --> |makes upset| A
+    F --> |result depends on time| A
+

@@ -8,64 +8,61 @@ workspace "Taller" "Ejemplo de clase" {
             usuario = person "Usuario general"
             admin = person "Administrador" "" "Posterior"
         }
-        
-        browser = softwareSystem "Web Browser" "" "Existing System, Browser"{
+            
+        sistema = softwareSystem "Web Application" "Bartech software" {
             usuario -> this "Usa"
             admin -> this "Usa"
-        }
-        
-        robot = softwareSystem "Robot" "" "Existing System, Robot"
-            
-        sistema = softwareSystem "Taller Ejemplo" "Sistema de ejemplo" {
             !docs docs
             !adrs adrs
 
-            vistas = group vistas {
-                desk = container "Desktop" "" "" "Desktop"{
+            vistas = group vistas-responsive {
+                tablet = container "Aplicacion Web Tablet" "" "" "Tablet"{
+                    usuario -> this "Usa"
+                    admin -> this "Usa"
+                }
+                
+                mobile = container "Aplicacion Web Mobile" "" "" "Mobile"{
+                    usuario -> this "Usa"
                     admin -> this "Usa"
                 }
             
-                tablet = container "Tablet" "" "" "Tablet"{
-                    usuario -> this "Usa"
-                }
-                
-                mobile = container "Mobile" "" "" "Mobile"{
-                    usuario -> this "Usa"
-                }
-            
                 webapp = container "Aplicación Web" "" "" "Browser" {
-                    integrador = component integra "Integrador de contenido" "php"
-                    notificaciones = component notifica "Manejador de notificaciones" "push"
-                    mapas = component map "Visualizador de mapas" "LeafLet"
-                    charts = component chart "Visualizador de gráficas" "Google Charts"
+                    usuario -> this "Usa"
+                    admin -> this "Usa"
+
+                    usuariosComp = component componenteUsuarios "usuarios" "php"
+                    autenticacionComp = component componenteAutenticacion "autenticacion" "push"
+                    pubComp = component componenteBares "bares" "LeafLet"
+                    cancionesComp = component componenteCanciones "canciones" "Google Charts"
                     
-                    browser -> integrador "Usa" "HTTP"
-                    browser -> notificaciones "Usa" "HTTP"
-                    integrador -> mapas "integra" "dHTML"
-                    integrador -> charts "integra" "dHTML"
+                    
                 }
             
             }
         
             servicios = container "Servicios"{
-                ventasServ = component ventas "Servicio de ventas" "Java" "Posterior"
+                apiGateway = component gateway "Servicio de gateway" "Java"
+                authServ = component autenticacion "Servicio de autenticacion" "Java"
                 usuariosServ = component usuarios "Servicio de usuarios" "Java"
-                recomendadorServ = component recomendador "Servicio de recomendador" "Java"
-                reportesServ = component reportes "Servicio de reportes" "Java"
+                pubServ = component bares "Servicio de bares" "Java"
+                songServ = component canciones "Servicio de canciones" "Java"
                 
                 webapp -> this "Consume" "restFul"
-                tablet -> this "Usa" "restFul"
-                mobile -> this "Usa" "restFul"
-                desk -> this "Usa" "restFul"
-                robot -> this "Usa" "restFul"
+                tablet -> this "Consume" "restFul"
+                mobile -> this "Consume" "restFul"
+                apiGateway -> authServ "Valida" "Http"
+                apiGateway -> usuariosServ "Redirecciona" "Http"
+                apiGateway -> pubServ "Redirecciona" "Http"
+                apiGateway -> songServ "Redirecciona" "Http"
+                authServ -> apiGateway "Responde" "Http"
             }
             database = container "DB" "Base de datos de ejemplo" "Schema Relacional" "db" {
 				servicios -> this "Persiste en" "JNDI"
 			}
         }
         
-        ext = softwareSystem "ext" "Sistema externo" "Existing System"{
-            sistema -> this "Consulta" "RestFul"
+        ext = softwareSystem "Youtube" "Sistema externo" "Existing System"{
+            sistema -> this "Redirecciona"
         }
         
         deploymentEnvironment "Monolito" {
@@ -99,136 +96,6 @@ workspace "Taller" "Ejemplo de clase" {
 				}
             }
         }
-
-        deploymentEnvironment "MVC" {
-            deploymentNode "Servidor App" "server1" "Windows, Linux o Mac" "" 2 {
-                deploymentNode "Tomcat" "Servidor de Aplicaciones" {
-					containerInstance webapp
-				}
-			}
-			deploymentNode "Servidor Negocio" "server2" "Windows, Linux o Mac" "" 2 {
-                deploymentNode "JBoss" "Servidor de Negocio" {
-					containerInstance servicios
-				}
-			}
-			deploymentNode "Servidor DB" "server3" "Windows, Linux o Mac" "" 2 {
-            	deploymentNode "MariaDB" "Servidor de DB" {
-					containerInstance database
-				}
-            }
-        }
-        
-        deploymentEnvironment "MicroServicios" {
-            si1 = deploymentGroup "Service instance 1"
-            si2 = deploymentGroup "Service instance 2"
-            si3 = deploymentGroup "Service instance 3"
-            si4 = deploymentGroup "Service instance 4"
-            
-            deploymentNode "Equipo escritorio" "desk" "Windows, Linux o Mac" "" {
-                containerInstance desk si1,si2,si3,si4
-            }
-            
-            deploymentNode "Tablet" "tablet" "Windows, Linux o Mac" "" {
-                containerInstance tablet si1,si2,si3,si4
-            }
-            
-            deploymentNode "Celular" "cel" "Windows, Linux o Mac" "" {
-                containerInstance mobile si1,si2,si3,si4
-            }
-            
-            deploymentNode "Servidor MsVentas" "ms1" "Windows, Linux o Mac" "" {
-                deploymentNode "JBoss" "Servidor de Negocio" {
-					containerInstance servicios si1 {
-					    description "MicroServicio Ventas"
-					}
-				}
-            	deploymentNode "SQLite" "Servidor de DB" {
-					containerInstance database si1
-				}
-			}
-			
-            deploymentNode "Servidor MsUsuarios" "ms2" "Windows, Linux o Mac" "" {
-                deploymentNode "JBoss" "Servidor de Negocio" {
-					containerInstance servicios si2 {
-					    description "MicroServicio Usuarios"
-					}
-				}
-            	deploymentNode "SQLite" "Servidor de DB" {
-					containerInstance database si2
-				}
-			}
-			
-            deploymentNode "Servidor MsRecomendador" "ms3" "Windows, Linux o Mac" "" {
-                deploymentNode "JBoss" "Servidor de Negocio" {
-					containerInstance servicios si3 {
-					    description "MicroServicio Recomendador"
-					}
-				}
-            	deploymentNode "SQLite" "Servidor de DB" {
-					containerInstance database si3
-				}
-			}
-			
-            deploymentNode "Servidor MsReportes" "ms4" "Windows, Linux o Mac" "" {
-                deploymentNode "JBoss" "Servidor de Negocio" {
-					containerInstance servicios si4 {
-					    description "MicroServicio Reportes"
-					}
-				}
-            	deploymentNode "SQLite" "Servidor de DB" {
-					containerInstance database si4
-				}
-			}
-        }
-        
-        deploymentEnvironment "Prod" {
-            deploymentNode "FW" "FW" {
-                firewall = infrastructureNode firewall "Firewall"
-            }
-            
-            deploymentNode "B1" "B1" {
-                webBalancer = infrastructureNode balancer "Balanceador"{
-                    firewall -> this "Redirecciona" "Http"
-                }
-            }
-            
-            psi1 = deploymentGroup "Service instance 1"
-            psi2 = deploymentGroup "Service instance 2"
-            
-            deploymentNode "Servidor App1" "serverA1" "Windows, Linux o Mac" {
-                deploymentNode "Tomcat" "Servidor de Aplicaciones" {
-					wa1 = containerInstance webapp psi1
-					webBalancer -> this "Balancea" "Http"
-				}
-				
-			}
-            deploymentNode "Servidor App2" "serverA2" "Windows, Linux o Mac" {
-                deploymentNode "Tomcat" "Servidor de Aplicaciones" {
-					wa2 = containerInstance webapp psi2
-					webBalancer -> this "Balancea" "Http"
-				}
-			}
-			deploymentNode "Servidor Negocio1" "serverS1" "Windows, Linux o Mac" {
-                deploymentNode "JBoss" "Servidor de Negocio" {
-					containerInstance servicios psi1
-				}
-			}
-			deploymentNode "Servidor Negocio2" "serverS2" "Windows, Linux o Mac" {
-                deploymentNode "JBoss" "Servidor de Negocio" {
-					containerInstance servicios psi2
-				}
-			}
-			deploymentNode "Servidor DB1" "serverDB1" "Windows, Linux o Mac" {
-            	deploymentNode "MariaDB" "Servidor de DB" {
-					containerInstance database psi1
-				}
-            }
-            deploymentNode "Servidor DB2" "serverDB2" "Windows, Linux o Mac" {
-            	deploymentNode "MariaDB" "Servidor de DB" {
-					containerInstance database psi2
-				}
-            }
-        }
     }
     
     views {
@@ -241,10 +108,6 @@ workspace "Taller" "Ejemplo de clase" {
             #"kroki.format" "svg"
         }
 
-        systemLandscape "Landscape" "Diagrama de landscape" {
-            include *
-            autoLayout tb
-        }
         systemContext sistema "Contexto" "Diagrama de contexto del sistema" {
             include *
             autoLayout tb
@@ -269,20 +132,8 @@ workspace "Taller" "Ejemplo de clase" {
             include *
             autoLayout lr
         }
-        deployment sistema "MVC" "MVC" "Despliegue sugerido en estilo MVC"{
-            include *
-            autoLayout lr
-        }
-        deployment sistema "MicroServicios" "MicroServicios" "Despliegue sugerido en Microservicios"{
-            include *
-            autoLayout lr
-        }
-        deployment sistema "Prod" "Produccion" "Despliegue sugerido en producción"{
-            include *
-            autoLayout lr
-        }
         image database "ER1" {
-            image MER-APP_BASE.png
+            image MER.png
             title "Entidad Relación"
         }
 
@@ -297,8 +148,13 @@ workspace "Taller" "Ejemplo de clase" {
         } 
 
         image database "Mermaid" {
-            mermaid graph.mmd
-            title "Mermaid Graph"
+            mermaid flujo-pre.mmd
+            title "Flujo sin bartech"
+        }
+
+        image database "Mermaid2" {
+            mermaid flujo-pos.mmd
+            title "Flujo bartech"
         }
 
         image database "Kroki" {

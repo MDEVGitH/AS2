@@ -6,38 +6,28 @@ workspace "Taller" "Ejemplo de clase" {
         }
         usuarios = group usuarios {
             usuario = person "Usuario general"
-            admin = person "Administrador" "" "Posterior"
+            admin = person "Administrador"
         }
             
-        sistema = softwareSystem "Web Application" "Bartech software" {
+        sistema = softwareSystem "Bartech" "Bartech software" {
             usuario -> this "Usa"
             admin -> this "Usa"
             !docs docs
             !adrs adrs
 
-            vistas = group vistas-responsive {
-                tablet = container "Aplicacion Web Tablet" "" "" "Tablet"{
-                    usuario -> this "Usa"
-                    admin -> this "Usa"
-                }
-                
-                mobile = container "Aplicacion Web Mobile" "" "" "Mobile"{
-                    usuario -> this "Usa"
-                    admin -> this "Usa"
-                }
             
-                webapp = container "Aplicación Web" "" "" "Browser" {
-                    usuario -> this "Usa"
-                    admin -> this "Usa"
+            
+            webapp = container "Aplicación Web" "" "" "Browser" {
+                usuario -> this "Usa"
+                admin -> this "Usa"
 
-                    usuariosComp = component componenteUsuarios "usuarios" "php"
-                    autenticacionComp = component componenteAutenticacion "autenticacion" "push"
-                    pubComp = component componenteBares "bares" "LeafLet"
-                    cancionesComp = component componenteCanciones "canciones" "Google Charts"
-                    
-                    
-                }
+                usuariosComp = component componenteUsuarios "usuarios" "php"
+                autenticacionComp = component componenteAutenticacion "autenticacion" "push"
+                pubComp = component componenteBares "bares" "LeafLet"
+                cancionesComp = component componenteCanciones "canciones" "Google Charts"
+                
             
+        
             }
         
             servicios = container "Servicios"{
@@ -47,14 +37,11 @@ workspace "Taller" "Ejemplo de clase" {
                 pubServ = component bares "Servicio de bares" "Java"
                 songServ = component canciones "Servicio de canciones" "Java"
                 
-                webapp -> this "Consume" "restFul"
-                tablet -> this "Consume" "restFul"
-                mobile -> this "Consume" "restFul"
                 apiGateway -> authServ "Valida" "Http"
                 apiGateway -> usuariosServ "Redirecciona" "Http"
                 apiGateway -> pubServ "Redirecciona" "Http"
                 apiGateway -> songServ "Redirecciona" "Http"
-                authServ -> apiGateway "Responde" "Http"
+                usuariosComp -> apiGateway "Consume" "restFul"
             }
             database = container "DB" "Base de datos de ejemplo" "Schema Relacional" "db" {
 				servicios -> this "Persiste en" "JNDI"
@@ -83,15 +70,15 @@ workspace "Taller" "Ejemplo de clase" {
                 tags "Amazon Web Services - Cloud"
                 deploymentNode "Amazon OpenSearch" {
 					tags "Amazon Web Services - OpenSearch Service"
-                    containerInstance webapp
-					containerInstance servicios
+                    containerInstance webapp "" "Posterior"
+					containerInstance servicios "" "Posterior"
 					
 				}
 				deploymentNode "Amazon RDS" {
 				    tags "Amazon Web Services - RDS"
 				    deploymentNode "Amazon Aurora" {
 				        tags "Amazon Web Services - Aurora MySQL Instance"
-				        containerInstance database
+				        containerInstance database "" "Posterior"
 				    }
 				}
             }
@@ -137,29 +124,67 @@ workspace "Taller" "Ejemplo de clase" {
             title "Entidad Relación"
         }
 
-        image database "ER2" {
-            image https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/ER_Diagram_MMORPG.png/673px-ER_Diagram_MMORPG.png
-            title "Entidad Relación 2"
-        }
-
         image database "PlantUML" {
             plantuml seq.plant
-            title "PlantUML Sequence"
+            title "Entidad relacion plantUML"
         } 
 
         image database "Mermaid" {
             mermaid flujo-pre.mmd
-            title "Flujo sin bartech"
+            title "Flujo sin bartech (As Is)"
         }
 
         image database "Mermaid2" {
             mermaid flujo-pos.mmd
-            title "Flujo bartech"
+            title "Flujo bartech (To be)"
+            description "Diagrama de flujo una vez implementado el software"
+        }
+        
+        image database "Mermaid3" {
+            mermaid class.mmd
+            title "Diagrama de clases"
         }
 
-        image database "Kroki" {
-            kroki erd erd.krk
-            title "Kroki ERD"
+        image database "Login" {
+            image login.png
+            title "Vista login"
+            description "Login de usuarios"
+        }
+
+        image database "Register" {
+            image register.png
+            title "Vista registro"
+            description "Registro de usuarios"
+        }
+
+        image database "Home" {
+            image home.png
+            title "Vista principal"
+            description "Vista una vez logeado el usuario"
+        }
+
+        image database "Songs" {
+            image songs.png
+            title "Vista playlist"
+            description "Vista del playlist cuando se selecciona un bar"
+        }
+
+        image database "Request" {
+            image request.png
+            title "Vista peticion de musica"
+            description "Vista del usuario general cuando quiere solicitar una cancion"
+        }
+
+        image database "Report" {
+            image reporte1.png
+            title "Vista canciones mas sonadas"
+            description "Vista del usuario Administrador para saber las canciones mas sonadas"
+        }
+
+        image database "Update" {
+            image update.png
+            title "Vista actualizar informacion del bar"
+            description "Vista del usuario Administrador para actualizar la informacion del bar"
         }
         
         themes https://static.structurizr.com/themes/amazon-web-services-2020.04.30/theme.json

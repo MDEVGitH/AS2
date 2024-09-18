@@ -1,55 +1,121 @@
 # T&iacute;tulo (IGNORADO)
 
-Texto
+Se hizo un análisis del negocio antes de la propuesta de este software, el cual se describe en el siguiente diagrama de secuencia:
 
-## Subtítulo
+## Diagrama de secuencia antes del software
 
-texto de este sub
+![Diagrama Mermaid de ejemplo](embed:Mermaid)
 
-Ejemplo de link externo: [link Externo](https://docs.structurizr.com/lite)
 
-Ejemplo de link interno: [link Interno](#subtítulo)
+Posteriormente se hizo otro análisis de cómo funcionará el negocio una vez implementado el software:
 
-Ejemplo de lista:
+## Diagrama de secuencia después del software
 
-- item 1
-- item 2
+![Diagrama Mermaid de ejemplo](embed:Mermaid2)
 
-Ejemplo de lista numerada:
+## Arquitectura C4
 
-1. Uno
-2. Dos
-3. Tres
+Para la arquitectura del sistema se optó por utilizar el modelo C4 la cual es una técnica para visualizar la arquitectura de software en diferentes niveles de abstracción.
 
-Ejemplo de código:
+## Diagrama de contexto
 
-```
-git clone https://github.com/structurizr/lite.git structurizr-lite
-git clone https://github.com/structurizr/ui.git structurizr-ui
-cd structurizr-lite
-./ui.sh
-./gradlew build
-```
+Primeramente se muestra el diagrama de contexto el cual muestra una vista de alto nivel del sistema y su entorno:
 
-Ejemplo de Diagrama:
+![Diagrama de ejemplo](embed:Contexto)
+
+Se puede observar que la aplicación web es utilizada por 2 tipos de usuarios (Administrador y usuario general). Por otra parte se relaciona con una aplicación externa (Youtube).
+
+## Diagrama de contenedores
+
+Luego se realizó el diagrama de contenedores el cual se enfoca en las aplicaciones, servicios y bases de datos que componen el sistema, en el cual se observa que se puede utilizar en distintos dispositivos:
+
+![Diagrama de ejemplo](embed:Contenedores)
+
+## Diagrama Componentes de servicios
+
+Con esto se puede detallar el diseño de cada uno de los contenedores.
+
+En el contenedor de servicios se puede observar la arquitectura relacionada al backend:
+
+![Diagrama de ejemplo](embed:ComponentesServicios)
+
+En este diagrama se puede observar la división de los componentes del backend, siguiendo el patrón de arquitectura de [Microservicios](https://www.atlassian.com/es/microservices/microservices-architecture). 
+En el diseño se tiene un componente llamado gateway el cual redirecciona las peticiones a los respectivos componentes, además filtrando las peticiones con ayuda del componente de autenticación, el cual verifica si las peticiones están autenticadas añadiendo una capa de seguridad.
+
+Por otra parte, tenemos los componentes de usuarios, bares y canciones los cuales tienen la lógica para manejar la información relacionada a cada una de dichas entidades.
+
+## Diagrama Componentes web
+
+En el contenedor aplicación web se puede observar la arquitectura relacionada al frontend.
+
+![Diagrama de ejemplo](embed:ComponentesWeb)
+
+Se puede observar que debido a que el framework seleccionado para la creación del frontend fue Angular, se realizó el diseño dividido por componentes, lo que ayuda a que el código sea modularizado, extensible y fácil de entender.
+
+
+## Diagrama Base de datos
+
+En cuanto a la base de datos, se utilizaron 3 entidades las cuales son usuarios, bares y canciones, los cuales se relacionan entre sí como se muestra en el diagrama mediante relaciones de uno a muchos, ya que un usuario podrá tener varios bares y a su vez cada bar puede tener varias canciones en la playlist.
+
+
+![Diagrama de ejemplo](embed:ER1)
+
+## Diagramas de despliegue
+
+
+La planeación de la fase de despliegue es esencial, ya que permite visualizar cómo sería el paso a un ambiente productivo, y modelar cómo interactúan cada uno de los componentes y sus configuraciones. En cuanto a la aplicación web y los servicios, es decir el frontend y el backend, se van a desplegar de forma local en un servidor de aplicaciones Tomcat, por otra parte la base de datos relacional se va a trabajar en PostgreSQL con un despliegue local.
+
+![Diagrama de ejemplo](embed:Monolito)
+
+
+Además se tiene planeado para una futura implementación realizar el despliegue productivo en la nube, utilizando los servicios de Amazon Web Services.
 
 ![Diagrama de ejemplo](embed:Cloud)
 
-## Mermaid example
 
-Ejemplo de Mermaid:
+## Mockups
 
-```mermaid
-graph.mmd
+En esta sección de mockup se encontrará una representación visual estática del producto o diseño de software que permite visualizar su apariencia final antes de ser implementado. Se utiliza ampliamente en diseño web, aplicaciones móviles, y otros productos digitales gracias a la ayuda del responsive design  para comunicar ideas y recibir retroalimentación temprana.Cabe resaltar que los mockups no solo ayudan a mostrar cómo se verá el producto, sino también a identificar posibles mejoras en la interfaz y experiencia de usuario antes del desarrollo.
+
+
+![Diagrama de ejemplo](embed:Login)
+![Diagrama de ejemplo](embed:Register)
+![Diagrama de ejemplo](embed:Home)
+![Diagrama de ejemplo](embed:Songs)
+![Diagrama de ejemplo](embed:Request)
+![Diagrama de ejemplo](embed:Report)
+![Diagrama de ejemplo](embed:Update)
+
+
+## Instalación local
+
+Requisitos:
+
+- Docker instalado
+- Angular versión 18
+- Git
+
+Para instalar el backend del proyecto se debe primero clonar el repositorio.
+
+```
+git clone https://github.com/MDEVGitH/bartech.git backend
+cd backend
 ```
 
-Ejemplo desde C4:
-![Diagrama Mermaid de ejemplo](embed:Mermaid)
+Luego se debe ejecutar el código de docker composer para descargar las imagenes y levantar los contenedores.
 
-Ejemplo de imágen externa:
+```
+docker-compose up
+```
 
-![Imágen Externa](https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/ER_Diagram_MMORPG.png/673px-ER_Diagram_MMORPG.png)
+En cuanto al frontend se debe clonar el repositorio.
 
-Ejemplo de imágen interna:
+```
+git clone https://github.com/MDEVGitH/bartech.git frontend
+cd frontend
+```
+Y ejecutar el comando de angular para ejecutar el proyecto.
 
-![Imágen Interna](images/photo.png)
+```
+ng s
+```

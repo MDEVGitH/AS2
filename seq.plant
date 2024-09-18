@@ -1,7 +1,28 @@
 @startuml
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+entity "USER" {
+    +Long id
+    +string username
+    +string password
+    +string name
+    +string surname
+}
+
+entity "BRANCH" {
+    +Long id
+    +string name
+    +string address
+}
+
+entity "SONG" {
+    +Long id
+    +string artist
+    +string gender
+    +string name
+    +bool isPlayed
+}
+
+USER ||--o{ BRANCH : "has"
+BRANCH ||--o{ SONG : "contains"
+
 @enduml

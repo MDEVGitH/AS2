@@ -78,7 +78,7 @@ Además se tiene planeado para una futura implementación realizar el despliegue
 En esta sección de mockup se encontrará una representación visual estática del producto o diseño de software que permite visualizar su apariencia final antes de ser implementado. Se utiliza ampliamente en diseño web, aplicaciones móviles, y otros productos digitales gracias a la ayuda del responsive design  para comunicar ideas y recibir retroalimentación temprana.Cabe resaltar que los mockups no solo ayudan a mostrar cómo se verá el producto, sino también a identificar posibles mejoras en la interfaz y experiencia de usuario antes del desarrollo.
 
 
-![Diagrama de ejemplo](embed:Login)
+![Imágen Interna](images/login.PNG)
 ![Diagrama de ejemplo](embed:Register)
 ![Diagrama de ejemplo](embed:Home)
 ![Diagrama de ejemplo](embed:Songs)
@@ -92,7 +92,7 @@ En esta sección de mockup se encontrará una representación visual estática d
 Requisitos:
 
 - Docker instalado
-- Angular versión 18
+- node version 18.9.1
 - Git
 
 Para instalar el backend del proyecto se debe primero clonar el repositorio.
@@ -117,5 +117,6 @@ cd frontend
 Y ejecutar el comando de angular para ejecutar el proyecto.
 
 ```
-ng s
+npm install -g @angular/cli
+ng serve
 ```

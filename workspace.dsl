@@ -42,10 +42,23 @@ workspace "Taller" "Ejemplo de clase" {
                 apiGateway -> pubServ "Redirecciona" "Http"
                 apiGateway -> songServ "Redirecciona" "Http"
                 usuariosComp -> apiGateway "Consume" "restFul"
+                autenticacionComp -> apiGateway "Consume" "restFul"
+                pubComp -> apiGateway "Consume" "restFul"
+                cancionesComp -> apiGateway "Consume" 
+                usuariosComp -> autenticacionComp "Subscribe"
+                pubComp -> autenticacionComp "Subscribe"
+                cancionesComp -> autenticacionComp "Subscribe"
+                
             }
-            database = container "DB" "Base de datos de ejemplo" "Schema Relacional" "db" {
-				servicios -> this "Persiste en" "JNDI"
+
+            database = container "DB" "Base de datos PostgreSQL " "Schema Relacional" "db" {
+				servicios -> this "Persiste en" "JPA"
+                authServ -> database "Persiste en" "JPA"
+                usuariosServ -> database "Persiste en" "JPA"
+                pubServ -> database "Persiste en" "JPA"
+                songServ -> database "Persiste en" "JPA"
 			}
+            
         }
         
         ext = softwareSystem "Youtube" "Sistema externo" "Existing System"{
@@ -68,11 +81,15 @@ workspace "Taller" "Ejemplo de clase" {
         deploymentEnvironment "Cloud" {
             deploymentNode "Amazon Web Services" {
                 tags "Amazon Web Services - Cloud"
-                deploymentNode "Amazon OpenSearch" {
-					tags "Amazon Web Services - OpenSearch Service"
-                    containerInstance webapp "" "Posterior"
+                deploymentNode "Amazon Cloud front" {
+                    deploymentNode "Amazon S3" {
+                        tags "Amazon Web Services - S3 Service"
+                        containerInstance webapp "" "Posterior"
+                    }
+                }
+                deploymentNode "Amazon ECS" {
+					tags "Amazon Web Services - ECS Service"
 					containerInstance servicios "" "Posterior"
-					
 				}
 				deploymentNode "Amazon RDS" {
 				    tags "Amazon Web Services - RDS"
@@ -146,43 +163,43 @@ workspace "Taller" "Ejemplo de clase" {
         }
 
         image database "Login" {
-            image login.png
+            image docs/images/login.png
             title "Vista login"
             description "Login de usuarios"
         }
 
         image database "Register" {
-            image register.png
+            image docs/images/register.png
             title "Vista registro"
             description "Registro de usuarios"
         }
 
         image database "Home" {
-            image home.png
+            image docs/images/home.png
             title "Vista principal"
             description "Vista una vez logeado el usuario"
         }
 
         image database "Songs" {
-            image songs.png
+            image docs/images/songs.png
             title "Vista playlist"
             description "Vista del playlist cuando se selecciona un bar"
         }
 
         image database "Request" {
-            image request.png
+            image docs/images/request.png
             title "Vista peticion de musica"
             description "Vista del usuario general cuando quiere solicitar una cancion"
         }
 
         image database "Report" {
-            image reporte1.png
+            image docs/images/reporte1.png
             title "Vista canciones mas sonadas"
             description "Vista del usuario Administrador para saber las canciones mas sonadas"
         }
 
         image database "Update" {
-            image update.png
+            image docs/images/update.png
             title "Vista actualizar informacion del bar"
             description "Vista del usuario Administrador para actualizar la informacion del bar"
         }
